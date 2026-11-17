@@ -974,6 +974,23 @@ GAMES.push({id:'tower',bot:1,hb:1,cat:'duel',name:'Tower Builder',tag:'2 Spieler
   const loop=ts=>{raf=requestAnimationFrame(loop);const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;if(!paused)update(dt);draw()};
   startTower();raf=requestAnimationFrame(loop);return()=>{cancelAnimationFrame(raf);window.removeEventListener('keydown',kd);window.removeEventListener('pointerdown',pd);document.body.classList.remove('tw');cv.remove()}}});
 })();
+/* ---------- Scroll-Fix ---------- */
+(()=>{
+const css=document.createElement('style');
+css.textContent=`.body:has(>.start){overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov>div{margin:auto}`;
+document.head.append(css);
+const inMenu=()=>!$app.querySelector('.top');
+const heal=()=>{if(!inMenu())return;document.body.classList.remove('tw');document.querySelectorAll('canvas.tower,.ov').forEach(n=>n.remove());if($app.style.overflowY!=='auto')$app.style.overflowY='auto'};
+const kick=()=>{heal();if(!inMenu())return;const y=$app.scrollTop;$app.style.overflowY='hidden';void $app.offsetHeight;$app.style.overflowY='auto';$app.scrollTop=y};
+const _home=home;home=function(){_home();heal()};
+addEventListener('pointerdown',heal,true);
+addEventListener('pageshow',kick);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)kick()});
+addEventListener('orientationchange',()=>setTimeout(kick,350));
+setInterval(heal,1500);
+})();
 
 home();
 </script></body></html>
